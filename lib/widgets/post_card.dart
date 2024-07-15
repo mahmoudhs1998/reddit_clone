@@ -1,7 +1,5 @@
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:video_player/video_player.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../controllers/reddit_controller.dart';
@@ -75,48 +73,41 @@ class PostCard extends StatelessWidget {
                 if (post.content.isNotEmpty)
                   Text(post.content),
                 const SizedBox(height: 8),
-
-                if (post.videoAssetPath != null)
-                  Chewie(
-                    controller: ChewieController(
-                      videoPlayerController: VideoPlayerController.networkUrl (
-                        Uri(path:'assets/videos/v.mp4'), // Adjust with correct path or URL
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.arrow_upward, color: post.isUpVotedByUser(currentUserId) ? Colors.orange : Colors.grey,),
+                            onPressed: () => controller.toggleVote(post.id, true),
+                          ),
+                          Text(
+                            post.score.toString(),
+                            style: TextStyle(
+                              color: post.score > 0 ? Colors.orange : (post.score < 0 ? Colors.blue : Colors.grey),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.arrow_downward, color: post.isDownVotedByUser(currentUserId) ? Colors.blue : Colors.grey,),
+                            onPressed: () => controller.toggleVote(post.id, false),
+                          ),
+                        ],
                       ),
-                      aspectRatio: 16 / 9, // Adjust as per your video's aspect ratio
-                      autoInitialize: true,
-                      looping: true,
-                    ),
+                      AwardButton(
+                        onPressed: () => _showAwardDialog(context),
+                        awardCount: post.awards,
+                      ),
+                      TextButton.icon(
+                        icon: const Icon(Icons.comment),
+                        label: Text('${post.commentCount} comments'),
+                        onPressed: () => controller.toggleExpandPost(post.id),
+                      ),
+                    ],
                   ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_upward, color: post.isUpVotedByUser(currentUserId) ? Colors.orange : Colors.grey,),
-                      onPressed: () => controller.toggleVote(post.id, true),
-                    ),
-                    Text(
-                      post.score.toString(),
-                      style: TextStyle(
-                        color: post.score > 0 ? Colors.orange : (post.score < 0 ? Colors.blue : Colors.grey),
-                      ),
-                    ),
-                    // Text(post.upvotes.toString()),
-                    IconButton(
-                      icon: Icon(Icons.arrow_downward, color: post.isDownVotedByUser(currentUserId) ? Colors.blue : Colors.grey,),
-                      onPressed: () => controller.toggleVote(post.id, false),
-                    ),
-                    const Spacer(),
-                    AwardButton(
-                      onPressed: () => _showAwardDialog(context),
-                      awardCount: post.awards,
-                    ),
-                    const SizedBox(width: 8),
-                    TextButton.icon(
-                      icon: const Icon(Icons.comment),
-                      label: Text('${post.commentCount} comments'),
-                      onPressed: () => controller.toggleExpandPost(post.id),
-                    ),
-                  ],
                 ),
                 if (controller.expandedPosts[post.id] ?? false)
                   Column(

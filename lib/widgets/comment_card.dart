@@ -11,7 +11,7 @@ class CommentCard extends StatelessWidget {
   final int depth;
   final RedditController controller = Get.find();
 
-  CommentCard({required this.comment, required this.postId , this.depth = 0});
+  CommentCard({super.key, required this.comment, required this.postId , this.depth = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class CommentCard extends StatelessWidget {
           if (depth > 0)
             Container(
               width: 24.0 * depth,
-              child: VerticalDivider(
+              child: const VerticalDivider(
                 color: Colors.grey,
                 thickness: 1,
                 indent: 12,
@@ -33,68 +33,73 @@ class CommentCard extends StatelessWidget {
             ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(right: 8.0, top: 8.0, bottom: 8.0),
+              padding: const EdgeInsets.only(right: 8.0, top: 8.0, bottom: 8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(child: Text('r/${comment.username[0]}'), radius: 12),
-                      SizedBox(width: 8),
-                      Text('r/${comment.username}' , style: TextStyle(fontWeight: FontWeight.bold)),
-                      SizedBox(width: 8),
-                      Text(timeago.format(comment.createdAt), style: TextStyle(color: Colors.grey)),
-                      if (controller.canEditOrDelete(comment.userId))
-                        PopupMenuButton<int>(
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: 0,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.edit, color: Colors.blue),
-                                  SizedBox(width: 8),
-                                  Text('Edit Comment'),
-                                ],
-                              ),
-                            ),
-                            PopupMenuItem(
-                              value: 1,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.delete, color: Colors.red),
-                                  SizedBox(width: 8),
-                                  Text('Delete Comment'),
-                                ],
-                              ),
-                            ),
-                          ],
-                          onSelected: (value) {
-                            if (value == 0) {
-                              _showEditCommentDialog(context);
-                            } else if (value == 1) {
-                              controller.deleteComment(comment.id);
-                            }
-                          },
-                        ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: Row(
+                      children: [
+                        CircleAvatar(child: Text(comment.username[0]), radius: 12),
+                        const SizedBox(width: 8),
+                        Text('r/${comment.username}' , style: const TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 4),
+                        Text(timeago.format(comment.createdAt), style: const TextStyle(color: Colors.grey)),
 
-                      if (comment.isOP)
-                        Container(
-                          margin: EdgeInsets.only(left: 8),
-                          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(4),
+                        if (controller.canEditOrDelete(comment.userId))
+                          PopupMenuButton<int>(
+                            itemBuilder: (context) => [
+                              const PopupMenuItem(
+                                value: 0,
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.edit, color: Colors.blue),
+                                    SizedBox(width: 8),
+                                    Text('Edit Comment'),
+                                  ],
+                                ),
+                              ),
+                              const PopupMenuItem(
+                                value: 1,
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.delete, color: Colors.red),
+                                    SizedBox(width: 8),
+                                    Text('Delete Comment'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            onSelected: (value) {
+                              if (value == 0) {
+                                _showEditCommentDialog(context);
+                              } else if (value == 1) {
+                                controller.deleteComment(comment.id);
+                              }
+                            },
                           ),
-                          child: Text('OP', style: TextStyle(fontSize: 10)),
-                        ),
-                    ],
+
+                        if (comment.isOP)
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text('OP', style: TextStyle(fontSize: 10)),
+                          ),
+                      ],
+                    ),
                   ),
                   // Spacer(),
 
 
 
                   Padding(
-                    padding: EdgeInsets.only(top: 4.0),
+                    padding: const EdgeInsets.only(top: 4.0),
                     child: Text(comment.content),
                   ),
                   Row(
@@ -116,8 +121,8 @@ class CommentCard extends StatelessWidget {
                         onPressed: () => controller.toggleCommentVote(comment.id, false),
                       ),
                       TextButton.icon(
-                        icon: Icon(Icons.reply, size: 16),
-                        label: Text('Reply', style: TextStyle(fontSize: 12)),
+                        icon: const Icon(Icons.reply, size: 16),
+                        label: const Text('Reply', style: TextStyle(fontSize: 12)),
                         onPressed: () => _showReplyDialog(context),
                       ),
                     ],
@@ -139,18 +144,18 @@ class CommentCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Reply to comment'),
+        title: const Text('Reply to comment'),
         content: TextField(
           controller: replyController,
-          decoration: InputDecoration(hintText: 'Enter your reply'),
+          decoration: const InputDecoration(hintText: 'Enter your reply'),
         ),
         actions: [
           TextButton(
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: Text('Reply'),
+            child: const Text('Reply'),
             onPressed: () {
               if (replyController.text.isNotEmpty) {
                 controller.addReply(postId, comment.id, replyController.text);
@@ -168,19 +173,19 @@ class CommentCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Edit Comment'),
+        title: const Text('Edit Comment'),
         content: TextField(
           controller: editController,
-          decoration: InputDecoration(hintText: 'Enter new content'),
+          decoration: const InputDecoration(hintText: 'Enter new content'),
           maxLines: null,
         ),
         actions: [
           TextButton(
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: Text('Save'),
+            child: const Text('Save'),
             onPressed: () {
               if (editController.text.isNotEmpty) {
                 controller.editComment(comment.id, editController.text);
