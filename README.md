@@ -54,6 +54,10 @@ This project follows a simple MVC (Model-View-Controller) architecture using the
 - **Views**: UI components and screens
 - **Controllers**: Handle business logic and state management
 
+## Note
+
+If you want to check and try posts with video, you can use the `PostCardVideo` class. The code for this class can be found in `widgets/post_video_card.dart`.  
+
 ## Contributing
 ## License
 
